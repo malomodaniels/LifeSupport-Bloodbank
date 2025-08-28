@@ -1,0 +1,239 @@
+/* Container for search bar */
+.search-bar {
+    display: flex;
+    justify-content: center; /* center it under the nav */
+    align-items: center;
+    margin-top: 10px;
+    gap: 8px; /* space between input and button */
+}
+
+/* Input field styling */
+.search-bar input {
+    padding: 8px 12px;
+    width: 265px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Input focus effect */
+.search-bar input:focus {
+    border-color: #ff4b5c; /* highlight color */
+    box-shadow: 0 0 5px rgba(255, 75, 92, 0.5);
+}
+
+/* Button styling */
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #ff4b5c; /* accent color */
+    border: none;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.search-bar button:hover {
+    background-color: #e03f50;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 20px;  /* <-- increase this to add space */
+    position: relative;
+    z-index: 10;
+}
+
+.btn-hover {
+    transition: all 0.2s ease;
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stats-card {
+    display: inline-block;       /* shrink to content width */
+    padding: 25px 15px;          /* vertical + reduced horizontal padding */
+    max-width: 150px;            /* set a fixed max width */
+    margin: 0 auto;              /* center inside the column */
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.stats-card {
+    padding: 20px 15px;          /* reduce padding */
+    max-width: 140px;            /* fixed width for compact look */
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: #dc3545;
+    margin-bottom: 8px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.stats-card:hover .stat-icon {
+    transform: scale(1.2);
+    color: #ff4b5c;
+}
+
+.stats-card small {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.stats-card h2 {
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Mobile adjustment: reduce card width on small screens */
+@media (max-width: 768px) {
+    .stats-card {
+        max-width: 110px;
+        padding: 15px 10px;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+}
+
+.info-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.info-card i {
+    font-size: 1.2rem;
+}
+
+.info-card p, .info-card span {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.list-section {
+    max-height: 400px; /* optional: limits height and allows scrolling */
+    overflow-y: auto;
+}
+
+/* Optional: scrollbar styling */
+.list-section::-webkit-scrollbar {
+    width: 6px;
+}
+.list-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+/* Base card */
+.info-card {
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 500;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover effect */
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* Icons */
+.info-card i {
+    font-size: 1.2rem;
+}
+
+/* Scrollable list */
+.list-section {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Blood-type badges */
+.blood-badge {
+    background-color: rgba(255,255,255,0.2);
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Color coding by blood type */
+.info-card[data-blood-type="A+"] { background-color: #dc3545; }
+.info-card[data-blood-type="A−"] { background-color: #e74c3c; }
+.info-card[data-blood-type="B+"] { background-color: #3498db; }
+.info-card[data-blood-type="B−"] { background-color: #2980b9; }
+.info-card[data-blood-type="AB+"] { background-color: #9b59b6; }
+.info-card[data-blood-type="AB−"] { background-color: #8e44ad; }
+.info-card[data-blood-type="O+"] { background-color: #e67e22; }
+.info-card[data-blood-type="O−"] { background-color: #d35400; }
+
+/* Alternate shading */
+.info-card:nth-child(even) {
+    opacity: 0.95;
+}
+
+/* Scrollbar */
+.list-section::-webkit-scrollbar {
+    width: 6px;
+}
+.list-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .info-card {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    .blood-badge {
+        font-size: 0.7rem;
+    }
+    .info-card i {
+        font-size: 1rem;
+    }
+}

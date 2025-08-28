@@ -1,0 +1,520 @@
+/* =======================
+   Search Bar
+======================= */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+.search-bar input {
+    padding: 8px 12px;
+    width: 265px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    border-color: #ff4b5c;
+    box-shadow: 0 0 5px rgba(255, 75, 92, 0.5);
+}
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #ff4b5c;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #e03f50;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.btn-hover {
+    transition: all 0.2s ease;
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* =======================
+   Stats Cards
+======================= */
+.stats-card {
+    display: inline-block;
+    padding: 20px 15px;
+    max-width: 140px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: #dc3545;
+    margin-bottom: 8px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.stats-card:hover .stat-icon {
+    transform: scale(1.2);
+    color: #ff4b5c;
+}
+
+.stats-card small {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.stats-card h2 {
+    font-weight: bold;
+    margin: 0;
+}
+
+/* =======================
+   Info Cards
+======================= */
+.info-card {
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.info-card i {
+    font-size: 1.2rem;
+}
+
+.info-card p, .info-card span {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Blood-type badges */
+.blood-badge {
+    background-color: rgba(255,255,255,0.2);
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Color coding by blood type */
+.info-card[data-blood-type="A+"] { background-color: #dc3545; }
+.info-card[data-blood-type="A−"] { background-color: #e74c3c; }
+.info-card[data-blood-type="B+"] { background-color: #3498db; }
+.info-card[data-blood-type="B−"] { background-color: #2980b9; }
+.info-card[data-blood-type="AB+"] { background-color: #9b59b6; }
+.info-card[data-blood-type="AB−"] { background-color: #8e44ad; }
+.info-card[data-blood-type="O+"] { background-color: #e67e22; }
+.info-card[data-blood-type="O−"] { background-color: #d35400; }
+
+/* Alternate shading */
+.info-card:nth-child(even) {
+    opacity: 0.95;
+}
+
+/* =======================
+   List Section / Scrollable
+======================= */
+.list-section {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Scrollbar styling */
+.list-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.list-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+/* =======================
+   Responsive Adjustments
+======================= */
+@media (max-width: 768px) {
+    .stats-card {
+        max-width: 110px;
+        padding: 15px 10px;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .info-card {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .blood-badge {
+        font-size: 0.7rem;
+    }
+
+    .info-card i {
+        font-size: 1rem;
+    }
+}
+
+/* Donor search bar adjustments */
+#donors .d-flex.gap-2 {
+    flex-wrap: nowrap; /* prevent input and button from stacking */
+}
+
+#searchDonor {
+    width: 205px;           /* adjust as needed to fit placeholder text */
+    min-width: 150px;       /* prevent shrinking too much on smaller screens */
+    padding: 4px 8px;       /* compact padding */
+    font-size: 0.875rem;    /* match Bootstrap small input */
+    flex-shrink: 0;         /* prevent shrinking in flex container */
+}
+
+#donors .btn-outline-secondary {
+    white-space: nowrap;    /* keep "Quick +" on the same line */
+    padding: 4px 8px;       /* small button padding */
+    font-size: 0.875rem;    /* match input size */
+}
+
+.list-header {
+    display: inline-flex;            /* shrink-wrap around content */
+    justify-content: space-between;  /* title left, buttons right */
+    align-items: center;
+    padding: 10px 16px;             /* increased padding for breathing room */
+    background-color: #fff;          /* white background */
+    border-radius: 12px;             /* rounded corners */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);  /* subtle shadow */
+    margin-bottom: 12px;             /* space below header box */
+    font-weight: 500;
+}
+
+.list-header h4 {
+    margin: 0;                       /* remove default margin */
+    margin-right: 16px;              /* space between title and input/button group */
+}
+
+.list-header .d-flex.gap-2 {
+    gap: 8px;                        /* spacing between search input and button */
+}
+
+.list-header .btn {
+    white-space: nowrap;             /* keep button text on one line */
+}
+
+/* Ensure search input and buttons align in height */
+.section-header input.short-search {
+    height: 34px; /* adjust to match button height */
+}
+
+.section-header button {
+    height: 34px; /* same as input */
+    padding: 0 10px; /* adjust horizontal padding if needed */
+}
+
+/* Card container for main sections */
+.section-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+
+/* Optional spacing between inner elements */
+.section-card .list-header {
+    margin-bottom: 15px;
+}
+
+/* Optional: make inner cards (charts/carousel) stand out */
+.section-card .card {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.section-card {
+    background-color: #f8f9fa; /* light gray */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* soft shadow */
+    margin-bottom: 30px; /* spacing below the section */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.stats-container {
+    margin-top: 10px;   /* reduce top space */
+    margin-bottom: 10px; /* reduce bottom space */
+}
+
+.stats-card {
+    padding: 15px 10px; /* slightly reduced padding for compact look */
+    margin-bottom: 10px; /* less vertical spacing between cards */
+}
+
+#stats {
+    margin-top: 10px;   /* less space above */
+    margin-bottom: 20px; /* less space below */
+}
+
+#stats .stats-card {
+    padding: 15px 10px;   /* slightly more compact padding */
+    margin-bottom: 10px;  /* reduce vertical spacing between cards if stacked */
+}
+
+.stats-card {
+    display: block;           /* block element */
+    width: 100%;              /* take full column width */
+    padding: 15px 100px;       /* add horizontal padding */
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .stats-card {
+        padding: 12px 15px;  /* reduce padding on small screens */
+        width: 100%;
+    }
+}
+
+.site-footer {
+    background-color: #212529; /* dark footer */
+    color: #f8f9fa;
+    font-size: 0.875rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-stats {
+    gap: 1rem; /* spacing between stats */
+}
+
+.footer-stat h5 {
+    font-weight: bold;
+    color: #ff4b5c; /* accent color */
+    margin-bottom: 0.2rem;
+}
+
+.footer-stat small {
+    color: #f8f9fa;
+    display: block;
+    max-width: 120px;
+}
+
+/* Footer buttons */
+.footer-btn {
+    background-color: rgba(255,255,255,0.1);
+    color: #f8f9fa;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin: 0 4px;
+    cursor: default;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.footer-btn:hover {
+    background-color: #ff4b5c;
+    border-color: #ff4b5c;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .footer-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .site-footer .col-md-4 {
+        margin-bottom: 0.5rem;
+    }
+    .footer-btn {
+        margin: 2px;
+    }
+}
+
+.footer-stat small {
+    color: #f8f9fa;
+}
+
+.site-footer .footer-stats-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;           /* space between each pair */
+    flex-wrap: nowrap;    /* prevent wrapping to the next line */
+    overflow-x: auto;     /* allow horizontal scroll if viewport is too small */
+}
+
+.site-footer .footer-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;             /* space between text and figure button */
+    white-space: nowrap;   /* prevent text from breaking */
+}
+
+.site-footer .footer-btn {
+    display: inline-block;
+    background-color: #343a40;
+    color: #f8f9fa;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: default; /* non-clickable */
+    transition: all 0.2s ease;
+}
+
+.site-footer .footer-btn:hover {
+    background-color: #495057;
+    transform: translateY(-2px);
+}
+
+.site-footer .footer-divider {
+    color: #adb5bd; /* lighter gray for the divider */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .site-footer .footer-stats-container {
+        gap: 15px;
+    }
+}
+
+.footer-carousel {
+    max-height: 350px;       /* increase height for larger images */
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background-color: #fff;
+    position: relative;
+}
+
+.footer-carousel .carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;      /* fit full image without cropping */
+    display: block;
+}
+
+.footer-carousel .carousel-caption {
+    position: absolute;
+    bottom: 10px;            
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background-color: rgba(0,0,0,0.4);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .footer-carousel {
+        max-height: 250px;    /* smaller height for mobile */
+    }
+
+    .footer-carousel .carousel-caption {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+}
+
+#search-bar {
+    display: none;      /* hide initially */
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+/* FAQ Accordion Red Theme */
+#faqAcc .accordion-button {
+    background-color: #ff4b5c; /* main red color */
+    color: #fff;               /* white text */
+    font-weight: 500;
+}
+
+#faqAcc .accordion-button.collapsed {
+    background-color: #dc3545; /* slightly darker red when collapsed */
+    color: #fff;
+}
+
+#faqAcc .accordion-button:focus {
+    box-shadow: none;          /* remove default focus outline */
+}
+
+#faqAcc .accordion-body {
+    background-color: #fff;    /* white background for body */
+    color: #333;               /* dark text for readability */
+}
+
+/* FAQ Accordion Hover Effect */
+#faqAcc .accordion-button:hover {
+    background-color: #ff6b7c; /* slightly lighter red on hover */
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+/* Smooth accordion collapse */
+#faqAcc .accordion-collapse {
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+#faqAcc .accordion-collapse.collapse:not(.show) .accordion-body {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+#faqAcc .accordion-collapse.show .accordion-body {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}

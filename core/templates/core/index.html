@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LifeSupport — Donor-Recipient Mapping System</title>
+
+  <!-- Bootstrap CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom CSS - make sure css/style.css exists at repo root -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Optional: favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="images/logo.png" alt="LifeSupport logo" height="36" class="me-2">
+        <span>LifeSupport</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
+          <li class="nav-item"><a class="nav-link" href="#donors">Donors</a></li>
+          <li class="nav-item"><a class="nav-link" href="#recipients">Recipients</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero vh-100 d-flex align-items-center text-white" style="background: url('images/blood-bg.png') center/cover no-repeat;">
+    <div class="container text-center">
+      <h1 class="display-4 fw-bold">Donate Blood. Save a Life.</h1>
+      <p class="lead mb-4">LifeSupport connects willing donors to recipients in need — fast, secure and reliable.</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a class="btn btn-light btn-lg px-4" href="#donate-modal" data-bs-toggle="modal" role="button">Become a Donor</a>
+        <a class="btn btn-outline-light btn-lg px-4" href="#find-blood">Find Blood</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-5">
+    <div class="container">
+
+      <!-- QUICK STATS / CALLOUT -->
+      <section class="mb-5">
+        <div class="row text-center g-4">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+              <div class="card-body">
+                <h5 class="card-title">Donors</h5>
+                <p class="card-text fs-4 fw-bold" id="stat-donors">1,204+</p>
+                <p class="text-muted small">Registered voluntary donors</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+              <div class="card-body">
+                <h5 class="card-title">Successful Matches</h5>
+                <p class="card-text fs-4 fw-bold" id="stat-matches">532+</p>
+                <p class="text-muted small">Lives helped</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+              <div class="card-body">
+                <h5 class="card-title">Urgent Cases</h5>
+                <p class="card-text fs-4 fw-bold" id="stat-urgent">12</p>
+                <p class="text-muted small">Active requests</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section id="how-it-works" class="mb-5">
+        <h2 class="mb-4">How it works</h2>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="p-4 border rounded h-100">
+              <h5>Register</h5>
+              <p class="small text-muted">Sign up as a donor or list a recipient's needs.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-4 border rounded h-100">
+              <h5>Match</h5>
+              <p class="small text-muted">Our system finds compatible donors nearby.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-4 border rounded h-100">
+              <h5>Connect</h5>
+              <p class="small text-muted">Donors and hospitals coordinate logistics for safe transfusion.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DONORS -->
+      <section id="donors" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2>Donors</h2>
+          <div>
+            <a class="btn btn-primary btn-sm" data-bs-toggle="modal" href="#donate-modal" role="button">Register as Donor</a>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <!-- Example donor cards (static placeholders) -->
+          <div class="col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Aisha K.</h5>
+                <p class="card-text"><strong>Blood type:</strong> O+</p>
+                <p class="card-text small text-muted">Location: Lagos</p>
+                <a href="#" class="btn btn-outline-danger btn-sm">Contact</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">David M.</h5>
+                <p class="card-text"><strong>Blood type:</strong> A-</p>
+                <p class="card-text small text-muted">Location: Abuja</p>
+                <a href="#" class="btn btn-outline-danger btn-sm">Contact</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Grace O.</h5>
+                <p class="card-text"><strong>Blood type:</strong> B+</p>
+                <p class="card-text small text-muted">Location: Ibadan</p>
+                <a href="#" class="btn btn-outline-danger btn-sm">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECIPIENTS / URGENT -->
+      <section id="recipients" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2>Recipients / Urgent Cases</h2>
+          <a class="btn btn-outline-danger btn-sm" href="#urgent-cases">View urgent</a>
+        </div>
+
+        <div class="list-group">
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Urgent — O- needed for surgery</h5>
+              <small>2 hours ago</small>
+            </div>
+            <p class="mb-1 small text-muted">Hospital: St. Mary General — Location: Lagos Island</p>
+            <a class="btn btn-sm btn-danger" href="#">Volunteer</a>
+          </div>
+
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Urgent — A+ requested</h5>
+              <small>5 hours ago</small>
+            </div>
+            <p class="mb-1 small text-muted">Clinic: Central Health — Location: Enugu</p>
+            <a class="btn btn-sm btn-danger" href="#">Volunteer</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="mb-5">
+        <h2 class="mb-4">Frequently Asked Questions</h2>
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqOne">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                      aria-expanded="false" aria-controls="collapseOne">
+                Who can donate blood?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="faqOne" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Most healthy adults between 18 and 65 years who meet screening criteria can donate. Specific eligibility may differ by country.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                      aria-expanded="false" aria-controls="collapseTwo">
+                How does matching work?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faqTwo" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                We match by blood type and proximity, then notify the registered donor and the requesting recipient or facility.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                      aria-expanded="false" aria-controls="collapseThree">
+                Is donating safe?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faqThree" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Yes. Donations are performed by trained personnel using sterile equipment. Donors rest and receive refreshments after donation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contact" class="mb-5">
+        <h2>Contact / Report an Issue</h2>
+        <div class="row">
+          <div class="col-md-7">
+            <form id="contactForm" action="#" method="post" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="name" class="form-label">Full name</label>
+                <input type="text" class="form-control" id="name" placeholder="Your name" required>
+                <div class="invalid-feedback">Please enter your name.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" rows="4" placeholder="How can we help?" required></textarea>
+                <div class="invalid-feedback">Please enter a message.</div>
+              </div>
+
+              <button type="submit" class="btn btn-danger">Send message</button>
+            </form>
+          </div>
+
+          <div class="col-md-5">
+            <div class="p-3 border rounded bg-light">
+              <h5>Office</h5>
+              <p class="small mb-1">LifeSupport HQ</p>
+              <p class="small text-muted mb-0">Lagos, Nigeria</p>
+              <hr>
+              <h6 class="mb-1">Emergency / Partnerships</h6>
+              <p class="small mb-0">support@lifesupport.ng</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div> <!-- /container -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <div class="mb-2 mb-md-0">
+        <strong>LifeSupport</strong> &nbsp; · &nbsp; Donor-Recipient Mapping System
+      </div>
+      <div>
+        <small class="text-muted">© <span id="year"></span> LifeSupport. All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DONOR REGISTRATION MODAL -->
+  <div class="modal fade" id="donate-modal" tabindex="-1" aria-labelledby="donateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="donorForm" class="needs-validation" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title" id="donateModalLabel">Register as a Donor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Full name</label>
+              <input type="text" class="form-control" id="donor-name" required>
+              <div class="invalid-feedback">Please provide your full name.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="donor-email" required>
+              <div class="invalid-feedback">Please provide a valid email.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="donor-phone" required>
+              <div class="invalid-feedback">Please provide a phone number.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Blood group</label>
+              <select class="form-select" id="donor-blood" required>
+                <option value="">Choose...</option>
+                <option>O+</option>
+                <option>O-</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+              </select>
+              <div class="invalid-feedback">Please choose a blood group.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Location (city)</label>
+              <input type="text" class="form-control" id="donor-location" required>
+              <div class="invalid-feedback">Please provide your city.</div>
+            </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <!-- Bootstrap Bundle (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JS - make sure js/script.js exists at repo root -->
+  <script src="js/script.js"></script>
+
+  <!-- Inline small helpers (keeps index self-contained for convenience) -->
+  <script>
+    // Set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Basic client-side form validation bootstrap style
+    (function () {
+      'use strict';
+      var forms = document.querySelectorAll('.needs-validation')
+      Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          } else {
+            // For now simulate success (since no backend)
+            event.preventDefault();
+            var btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+              btn.disabled = true;
+              var originalText = btn.textContent;
+              btn.textContent = "Submitted";
+              setTimeout(function () {
+                btn.disabled = false;
+                btn.textContent = originalText;
+                // Close modal if inside one
+                var modalEl = form.closest('.modal');
+                if (modalEl) {
+                  var modal = bootstrap.Modal.getInstance(modalEl);
+                  if (modal) modal.hide();
+                }
+                form.reset();
+                form.classList.remove('was-validated');
+              }, 1200);
+            }
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })();
+
+    // Example: update placeholder stats dynamically (replace with real data later)
+    document.addEventListener('DOMContentLoaded', function() {
+      // These would be replaced by API responses once backend is added
+      var donors = 1204;
+      var matches = 532;
+      var urgent = 12;
+      document.getElementById('stat-donors').textContent = donors + '+';
+      document.getElementById('stat-matches').textContent = matches + '+';
+      document.getElementById('stat-urgent').textContent = urgent;
+    });
+  </script>
+</body>
+</html>

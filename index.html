@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LifeSupport — Prototype</title>
+
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent:#dc3545;
+      --muted:#f8f9fa;
+    }
+    body{font-family:Inter,system-ui,Segoe UI,Arial; background:#fff; color:#222; scroll-behavior:smooth;}
+    /* HERO */
+    .hero{
+      min-height:78vh;
+      display:flex; align-items:center; justify-content:center;
+      background-image:linear-gradient(rgba(0,0,0,0.38),rgba(0,0,0,0.38)), url("{% static 'images/blood-bg.png' %}");
+      background-size:cover; background-position:center;
+      color:#fff; text-align:center; padding:60px 15px;
+    }
+    .hero h1{font-size:2.6rem; font-weight:700; color:var(--accent); text-shadow: 0 4px 14px rgba(0,0,0,0.4);} 
+    .hero p{color:#fff; opacity:0.95; font-size:1.05rem;}
+    .btn-cta{border-radius:30px; padding:10px 26px; font-weight:600;}
+
+    /* NAV */
+    .navbar-brand{font-weight:700; letter-spacing:0.5px;}
+    .nav-quick-btn{margin-left:.5rem}
+
+    /* STATS */
+    .stats-card{border-radius:10px; padding:14px; transition:transform .25s; border:1px solid rgba(0,0,0,0.06); background:#fff; text-decoration:none; color:inherit;} /* make link look like card */
+    .stats-card:hover{transform:translateY(-6px); box-shadow:0 10px 30px rgba(0,0,0,0.06);} 
+
+    /* LISTS */
+    .list-section { max-height:300px; overflow:auto; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#fff; padding:0.25rem; }
+    .list-item-compact { padding:.65rem .9rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.03); }
+    .list-item-compact:last-child{border-bottom:none;}
+    .recipient-urgency{display:block; margin-top:6px; color:var(--accent); font-weight:700;}
+
+    /* SEARCH */
+    .short-search{max-width:420px;} /* slightly wider so placeholder shows fully */
+
+    /* CAROUSEL IMAGES */
+    .carousel-img{height:140px; width:100%; object-fit:cover; border-radius:8px;}
+
+    /* CHAT */
+    .chat-toggle{position:fixed; right:18px; bottom:18px; z-index:1200;}
+    .chat-panel{position:fixed; right:18px; bottom:76px; width:340px; max-width:90vw; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.18); overflow:hidden; display:none; z-index:1200; background:#fff;}
+
+    /* FOOTER SLIDESHOW */
+    .footer-carousel .carousel-inner{align-items:center;}
+    .footer-carousel img{height:90px; object-fit:cover; border-radius:8px;}
+
+    /* MODALS */
+    .modal-header.bg-accent{background:var(--accent); color:#fff;}
+
+    /* MAPPING TABLE TWEAKS */
+    #mappingTable thead th { text-align:center; }
+    #mappingTable .table-sm th, #mappingTable .table-sm td { padding: .25rem .5rem; }
+
+    /* RESPONSIVE tweaks */
+    @media (max-width:767px){
+      .hero h1{font-size:1.9rem;}
+      .stats-card h2{font-size:1.4rem;}
+      .short-search{max-width:100%;}
+      .list-section{max-height:220px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  <div id="statToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="statToastBody"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">LifeSupport</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navmenu"><span class="navbar-toggler-icon"></span></button>
+
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="#donors">Donors</a></li>
+        <li class="nav-item"><a class="nav-link" href="#recipients">Recipients</a></li>
+        <li class="nav-item"><a class="nav-link" href="#stats">Stats</a></li>
+        <li class="nav-item ms-2">
+          <button class="btn btn-outline-danger nav-quick-btn" data-bs-toggle="modal" data-bs-target="#eligibilityModal">Check Donor Eligibility</button>
+        </li>
+        <li class="nav-item ms-2">
+          <button class="btn btn-danger nav-quick-btn" data-bs-toggle="modal" data-bs-target="#faqModal">FAQs</button>
+        </li>
+        <li><button id="search-toggle" class="search-icon">🔍</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="search-bar" id="search-bar" style="display:none; padding:8px 15px;">
+  <div class="container d-flex gap-2">
+    <input class="form-control form-control-sm" placeholder="Search by blood type or location">
+    <button class="btn btn-sm btn-outline-secondary" onclick=>Search</button>
+  </div>
+</div>
+<br>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-content">
+    <h1>Donate Blood, Save Lives</h1>
+    <p class="mb-3">Join our network — register as a donor, request blood, or check eligibility in seconds.</p>
+    <div class="d-flex justify-content-center gap-2">
+      <a class="btn btn-danger btn-cta" href="#registrationModal" data-bs-toggle="modal">Register as Donor</a>
+      <a class="btn btn-outline-light btn-cta" href="#donors">Find Donors</a>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="container my-5">
+
+<!-- STATS row (fanciful, non-clickable) -->
+<section id="stats" class="mb-5">
+  <div class="row g-3 text-center">
+
+    <div class="col-md-4 d-flex justify-content-center">
+      <div class="stats-card d-block">
+        <i class="bi bi-people-fill stat-icon"></i>
+        <small class="text-muted">Total Donors</small>
+        <h2 id="totalDonors" class="text-danger mb-0">0</h2>
+      </div>
+    </div>
+
+    <div class="col-md-4 d-flex justify-content-center">
+      <div class="stats-card d-block">
+        <i class="bi bi-person-badge-fill stat-icon"></i>
+        <small class="text-muted">Total Recipients</small>
+        <h2 id="totalRecipients" class="text-danger mb-0">0</h2>
+      </div>
+    </div>
+
+    <div class="col-md-4 d-flex justify-content-center">
+      <div class="stats-card d-block">
+        <i class="bi bi-exclamation-triangle-fill stat-icon"></i>
+        <small class="text-muted">Urgent Requests</small>
+        <h2 id="urgentRecipients" class="text-danger mb-0">0</h2>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- donor & recipient columns -->
+<div class="section-card p-3">
+  <section class="row gx-4 gy-4">
+    <!-- Donors -->
+    <div class="col-lg-6" id="donors">
+      <div class="list-header d-flex align-items-center justify-content-between">
+        <h4 class="mb-0"><b>Available Donors</b></h4>
+        <div class="d-flex gap-2">
+          <input id="searchDonor" class="form-control form-control-sm short-search" placeholder="Search blood group (e.g. O+)" oninput="renderDonors()">
+          <button class="btn btn-sm btn-outline-secondary" onclick="openRegistration('donor')">Join Donor List +</button>
+        </div>
+      </div>
+      <div class="list-section mt-2" id="donorList" aria-live="polite">
+        <!-- donor cards -->
+      </div>
+    </div>
+
+    <!-- Recipients -->
+    <div class="col-lg-6" id="recipients">
+      <div class="list-header d-flex align-items-center justify-content-between">
+        <h4 class="mb-0"><b>Recipients in Need</b></h4>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" onclick="openRegistration('recipient')">Join Waitlist +</button>
+          <button class="btn btn-sm btn-outline-secondary" id="mappingBtn">Donor-Recipient Mapping</button>
+        </div>
+      </div>
+      <div class="list-section mt-2" id="recipientList">
+        <!-- recipient cards -->
+      </div>
+
+    </div>
+
+  </section>
+</div>
+
+<!-- Mapping Modal (shows matching table) -->
+<div class="modal fade" id="mappingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Donor → Recipient Matches</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="mappingContainer">Loading...</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart & Carousel -->
+<div class="section-card mb-4">
+  <section class="row mt-4 g-4 align-items-start">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5>Blood Availability Chart</h5>
+        <canvas id="bloodChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5>Flash Cards</h5>
+        <div id="recentDonorsCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner" id="carouselInner"></div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#recentDonorsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#recentDonorsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-dark text-light py-4 site-footer">
+  <div class="container">
+    <div class="row align-items-center gy-3">
+
+      <!-- Left section -->
+      <div class="col-md-4 text-center text-md-start">
+        <strong>LifeSupport</strong><br>
+        <small>Connecting recipients to donors</small>
+      </div>
+
+      <!-- Stats section (single horizontal line) -->
+      <div class="col-md-4 d-flex justify-content-center text-center text-md-start">
+        <div class="footer-stat">
+          <span>Annual Donors Worldwide:</span>
+          <span class="footer-btn">119M People</span>
+        </div>
+        <span class="footer-divider">&nbsp;</span>
+        <div class="footer-stat">
+          <span>Lives Saved:</span>
+          <span class="footer-btn">4.5M</span>
+        </div>
+        <span class="footer-divider">&nbsp;</span>
+        <div class="footer-stat">
+          <span>Annual Volume Transfused:</span>
+          <span class="footer-btn">118M Units</span>
+        </div>
+      </div>
+
+      <!-- Right section -->
+      <div class="col-md-4 text-center text-md-end">
+        <span class="footer-btn">Contact</span>
+        <span class="footer-btn">Privacy</span>
+        <span class="footer-btn">About</span>
+      </div>
+
+    </div>
+  </div>
+</footer>
+
+<!-- CHAT WIDGET -->
+<div class="chat-panel" id="chatPanel">
+  <div class="p-2 bg-danger text-white d-flex justify-content-between align-items-center">
+    <div><strong>LifeSupport AI</strong><div style="font-size:12px; opacity:.9">Assistant</div></div>
+    <div><button class="btn btn-sm btn-light" onclick="toggleChat()">Close</button></div>
+  </div>
+  <div id="chatMessages" style="height:220px; padding:10px; overflow:auto; background:#f7f7f7"></div>
+  <div class="p-2 d-flex gap-2">
+    <input id="chatInput" class="form-control form-control-sm" placeholder="Ask about eligibility, locations..." onkeypress="if(event.key==='Enter') sendChat()">
+    <button class="btn btn-danger btn-sm" id="chatSendBtn">Send</button>
+  </div>
+</div>
+<button class="btn btn-danger rounded-circle chat-toggle" title="Chat" onclick="toggleChat()">💬</button>
+
+<!-- ELIGIBILITY MODAL -->
+<div class="modal fade" id="eligibilityModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Check Donor Eligibility</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="eligibilityForm" onsubmit="event.preventDefault(); checkEligibility();">
+          <div class="mb-2"><label>Age</label><input id="elig_age" type="number" class="form-control" min="0"></div>
+          <div class="mb-2"><label>Weight (kg)</label><input id="elig_weight" type="number" class="form-control" min="0"></div>
+          <div class="mb-2"><label>Recent Fevers/Illness?</label>
+            <select id="elig_ill" class="form-select"><option value="no" selected>No</option><option value="yes">Yes</option></select>
+          </div>
+          <div class="mb-2"><label>Last donation (days ago)</label><input id="elig_lastdon" type="number" class="form-control" min="0" value="100"></div>
+          <div class="mb-2"><label>Do you take medications that prevent donation?</label>
+            <select id="elig_med" class="form-select"><option value="no" selected>No</option><option value="yes">Yes</option></select>
+          </div>
+          <div class="d-flex gap-2 justify-content-end">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-danger" type="button" onclick="checkEligibility()">Check</button>
+          </div>
+        </form>
+        <div class="mt-3"><div id="eligResult" class="fw-bold"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ MODAL -->
+<div class="modal fade" id="faqModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Frequently Asked Questions</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="accordion" id="faqAcc">
+          <!-- FAQ 1 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
+                How often can I donate blood?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Whole blood can be donated every 56 days. Platelets and plasma have different intervals.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                What should I do before donating?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Be well-rested, hydrated, and avoid heavy meals before donation.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                Is donation safe?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Yes — sterile, single-use equipment and strict testing ensure safety.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                Who is eligible to donate?
+              </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Eligibility is assessed individually, including questions about recent sexual partners and certain medications, to ensure blood safety.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                Why are questions about anal sex included?
+              </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Anal sex has a higher statistical risk of HIV transmission. Screening focuses on risk-based factors to protect recipients.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false" aria-controls="faq6">
+                Can I donate if I’m on PrEP or PEP?
+              </button>
+            </h2>
+            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Individuals who have taken oral PrEP/PEP in the past 3 months, or injectable PrEP in the past 2 years, are temporarily deferred to ensure testing accuracy.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq7" aria-expanded="false" aria-controls="faq7">
+                Are transgender donors eligible?
+              </button>
+            </h2>
+            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Yes — the screening is gender-neutral and all donors meeting eligibility criteria are welcome.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq8" aria-expanded="false" aria-controls="faq8">
+                Why aren’t condom use or other safe-sex practices asked about?
+              </button>
+            </h2>
+            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Screening focuses on evidence-based risk factors rather than safe-sex practices, to reliably identify potential exposure during the window period of testing.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 9 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq9" aria-expanded="false" aria-controls="faq9">
+                Isn’t all blood tested anyway?
+              </button>
+            </h2>
+            <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Yes, but tests have a “window period” during which new infections may not be detected. Screening questionnaires add an extra layer of safety.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 10 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq10" aria-expanded="false" aria-controls="faq10">
+                Can I donate if I’m monogamous?
+              </button>
+            </h2>
+            <div id="faq10" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body">
+                Yes — donors with one sexual partner for at least 3 months who meet all other criteria are eligible regardless of sexual activity type.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRATION MODAL (Donor & Recipient via same modal) -->
+<div class="modal fade" id="registrationModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="regTitle">Register</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+          <input type="hidden" id="regType" value="donor">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full name</label>
+              <input id="regName" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Contact</label>
+              <input id="regContact" class="form-control" placeholder="Phone or email" required>
+            </div>
+
+            <!-- Split ABO and Rhesus -->
+            <div class="col-md-4">
+              <label class="form-label">ABO Group</label>
+              <select id="regBlood" class="form-select" required>
+                <option value="">Select</option>
+                <option>A</option><option>B</option><option>AB</option><option>O</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Rhesus Factor</label>
+              <select id="regRhesus" class="form-select" required>
+                <option value="">Select</option>
+                <option>+</option><option>-</option>
+              </select>
+            </div>
+
+            <div class="col-md-4 donor-only">
+              <label class="form-label">Age</label>
+              <input id="regAge" type="number" class="form-control" min="0" required>
+            </div>
+            <div class="col-md-4 donor-only">
+              <label class="form-label">Weight (lbs)</label>
+              <input id="regWeight" type="number" class="form-control" min="0" required>
+            </div>
+
+            <!-- additional donor requirements -->
+            <div class="col-md-4 donor-only">
+              <label class="form-label">Last donation (days ago)</label>
+              <input id="regLastDon" type="number" class="form-control" min="0" value="100" required>
+            </div>
+            <div class="col-md-4 donor-only">
+              <label class="form-label">Recent Illness?</label>
+              <select id="regIll" class="form-select" required>
+                <option value="no" selected>No</option><option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="col-md-4 donor-only">
+              <label class="form-label">Disqualifying Medications?</label>
+              <select id="regMed" class="form-select" required>
+                <option value="no" selected>No</option><option value="yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="col-12 recipient-only d-none">
+              <label class="form-label">Urgency (Low / Medium / High)</label>
+              <select id="regUrgency" class="form-select">
+                <option>Low</option><option>Medium</option><option selected>High</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Notes (optional)</label>
+              <textarea id="regNotes" class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+
+          <div class="mt-3 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-danger" type="submit">Submit</button>
+          </div>
+        </form>
+
+        <div id="regMsg" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// ---------- Hardcoded data (only used as requested) ----------
+let donors = [
+  {name:"Ayo Bridgette", blood:"A+", contact:"08132341080", age:25, weight:65, notes:"Regular donor"},
+  {name:"Sanusi Muhammad", blood:"O-", contact:"07015552412", age:42, weight:90, notes:"Available weekends only"},
+  {name:"Christianah M.", blood:"AB+", contact:"+2348133453113", age:26, weight:75, notes:"New donor"},
+  {name:"Fikayo F.", blood:"O+", contact:"08165320092", age:31, weight:120, notes:"Available immediately. WhatsApp only."},
+  {name:"Callistus M.", blood:"B+", contact:"07013254090", age:26, weight:120, notes:"New donor"},
+  {name:"Nkechi Benedict", blood:"AB+", contact:"09123003429", age:26, weight:120, notes:"Regular donor"},
+  {name:"Tolani C.", blood:"B-", contact:"09056828017", age:26, weight:120, notes:"Regular"},
+  {name:"Chukwudi E.", blood:"A+", contact:"08145431232", age:26, weight:120, notes:"Regular"},
+  {name:"Chloe O.", blood:"AB-", contact:"07098205643", age:26, weight:120, notes:"Regular donor - Available tomorrow."},
+  {name:"Oluwatoyin L.", blood:"O+", contact:"08139671214", age:26, weight:120, notes:"New donor"},
+  {name:"Geoffery Baratheon", blood:"O+", contact:"07039761261", age:26, weight:120, notes:"Regular donor"},
+];
+
+let recipients = [
+  {name:"Kehinde P.", blood:"A+", urgency:"High", contact:"09189228831", notes:"Surgery tomorrow"},
+  {name:"Ciroma A.", blood:"O-", urgency:"Medium", contact:"08122421771", notes:"Transfusion needed"},
+  {name:"Yasmin Bada", blood:"AB+", urgency:"High", contact:"08132421771", notes:"Child birth"},
+  {name:"Faleti Falana", blood:"O+", urgency:"Low", contact:"08132240110", notes:"Transfusion needed next month"},
+  {name:"Baba A.", blood:"B-", urgency:"High", contact:"09023926644", notes:"Bleeding disorder"},
+  {name:"Charlie C.", blood:"AB-", urgency:"Medium", contact:"08122421771", notes:"Transfusion needed"},
+];
+
+// Compatibility mapping: donor blood -> recipient blood they can donate to
+const compatibility = {
+  "O-": ["A+","A-","B+","B-","AB+","AB-","O+","O-"],
+  "O+": ["A+","B+","AB+","O+"],
+  "A-": ["A+","A-","AB+","AB-"],
+  "A+": ["A+","AB+"],
+  "B-": ["B+","B-","AB+","AB-"],
+  "B+": ["B+","AB+"],
+  "AB-": ["AB+","AB-"],
+  "AB+": ["AB+"]
+};
+
+const urgencyOrder = { "High": 1, "Medium": 2, "Low": 3 };
+
+// ---------- Helpers ----------
+function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+function renderDonors(){
+  const container = document.getElementById('donorList');
+  const q = (document.getElementById('searchDonor')?.value || '').toLowerCase().trim();
+  container.innerHTML='';
+  const list = donors.filter(d => !q || (d.blood && d.blood.toLowerCase().includes(q)) || d.name.toLowerCase().includes(q));
+  if(!list.length){
+    container.innerHTML = `<div class="p-3 text-muted">No donors found.</div>`;
+    updateStats(); updateChart(); renderCarousel();
+    return;
+  }
+  list.forEach(d=>{
+    const el = document.createElement('div');
+    el.className='list-item-compact';
+    el.innerHTML = `<div><strong>${escapeHtml(d.name)}</strong><div class="text-muted small">${escapeHtml(d.blood)}</div></div>
+      <div class="text-end"><div class="small text-muted">${escapeHtml(d.notes || '')}</div><div class="badge bg-danger">${escapeHtml(d.contact)}</div></div>`;
+    container.appendChild(el);
+  });
+  updateStats(); updateChart(); renderCarousel();
+}
+
+function renderRecipients(){
+  const container = document.getElementById('recipientList');
+  container.innerHTML='';
+  if(!recipients.length){
+    container.innerHTML = `<div class="p-3 text-muted">No recipients found.</div>`;
+    updateStats(); return;
+  }
+  recipients.forEach(r=>{
+    const el = document.createElement('div');
+    el.className='list-item-compact';
+    el.style.flexDirection='column';
+    el.innerHTML = `<div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+        <div><strong>${escapeHtml(r.name)}</strong> — <span class="text-muted small">${escapeHtml(r.blood)}</span></div>
+        <div><span class="badge bg-danger">${escapeHtml(r.contact)}</span></div>
+      </div>
+      <div style="width:100%; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+        <div class="recipient-urgency">Urgency: ${escapeHtml(r.urgency)}</div>
+        <div class="text-muted small">${escapeHtml(r.notes || '')}</div>
+      </div>`;
+    container.appendChild(el);
+  });
+  updateStats();
+}
+
+function updateStats(){
+  document.getElementById('totalDonors').innerText = donors.length;
+  document.getElementById('totalRecipients').innerText = recipients.length;
+  document.getElementById('urgentRecipients').innerText = recipients.filter(r=>r.urgency && r.urgency.toLowerCase()==='high').length;
+}
+
+let bloodChart = null;
+function updateChart(){
+  const groups = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
+  const counts = groups.map(g => donors.filter(d => d.blood===g).length);
+  if(!bloodChart){
+    const ctx = document.getElementById('bloodChart').getContext('2d');
+    bloodChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: groups, datasets:[{label:'Donors', data:counts, backgroundColor: 'rgba(220,53,69,0.8)'}]},
+      options:{plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+    });
+  } else {
+    bloodChart.data.datasets[0].data = counts;
+    bloodChart.update();
+  }
+}
+
+function renderCarousel(){
+  const donorSlides = [
+    {imgPng:"{% static 'images/donor1.png' %}", imgJpg:"{% static 'images/donor1.jpg' %}", quote:"\u201CBe a hero. Donate blood.\u201D"},
+    {imgPng:"{% static 'images/donor2.png' %}", imgJpg:"{% static 'images/donor2.jpg' %}", quote:"\u201CA few minutes can save a lifetime.\u201D"},
+    {imgPng:"{% static 'images/donor3.png' %}", imgJpg:"{% static 'images/donor3.jpg' %}", quote:"\u201CBe the reason someone lives today.\u201D"}
+  ];
+  const inner = document.getElementById('carouselInner');
+  if(inner){ inner.innerHTML=''; donorSlides.forEach((d,i)=>{
+    const div = document.createElement('div');
+    div.className = 'carousel-item ' + (i===0 ? 'active':'');
+    div.innerHTML = `<div class="d-flex flex-column align-items-center p-3">
+          <img src="${d.imgPng}" onerror="this.onerror=null; this.src='${d.imgJpg}'" class="carousel-img mb-2" alt="Donor ${i+1}">
+          <div class="text-muted small text-center">${escapeHtml(d.quote)}</div>
+        </div>`;
+    inner.appendChild(div);
+  }); }
+}
+
+// ---------- Eligibility ----------
+function checkEligibility(){
+  const age = parseInt(document.getElementById('elig_age').value||0);
+  const weight = parseInt(document.getElementById('elig_weight').value||0);
+  const ill = document.getElementById('elig_ill').value;
+  const lastdon = parseInt(document.getElementById('elig_lastdon').value||9999);
+  const med = document.getElementById('elig_med').value;
+
+  let reasons = [];
+  if(age < 16) reasons.push('Minimum age is 16.');
+  if(weight < 110) reasons.push('Minimum weight is 110 lbs.');
+  if(ill === 'yes') reasons.push('Recent illness prevents donation.');
+  if(lastdon < 56) reasons.push('Must wait 56 days between whole blood donations.');
+  if(med === 'yes') reasons.push('Medications may disqualify you — consult clinic.');
+
+  const ok = reasons.length === 0;
+  const el = document.getElementById('eligResult');
+  if(ok){ el.innerHTML = `<span class="text-success fw-bold">You are likely eligible to donate. Please confirm at a center.</span>`; }
+  else { el.innerHTML = `<span class="text-danger fw-bold">Not eligible at this time:</span><ul>${reasons.map(r=>'<li>'+r+'</li>').join('')}</ul>`; }
+}
+
+// ---------- Registration ----------
+function openRegistration(type='donor'){
+  document.getElementById('regType').value = type;
+  document.getElementById('regTitle').innerText = type==='donor' ? 'Register as Donor' : 'Request Blood (Recipient)';
+  document.querySelectorAll('.donor-only').forEach(el => el.classList.toggle('d-none', type!=='donor'));
+  document.querySelectorAll('.recipient-only').forEach(el => el.classList.toggle('d-none', type!=='recipient'));
+  document.getElementById('regForm').reset();
+  document.getElementById('regMsg').innerText = '';
+  const modal = new bootstrap.Modal(document.getElementById('registrationModal'));
+  modal.show();
+}
+
+function submitRegistration(){
+  const type = document.getElementById('regType').value;
+  const name = document.getElementById('regName').value.trim();
+  const contact = document.getElementById('regContact').value.trim();
+  const abo = document.getElementById('regBlood').value;
+  const rhesus = document.getElementById('regRhesus').value;
+  const notes = document.getElementById('regNotes').value.trim();
+
+  if(!name || !contact || !abo || !rhesus){
+    document.getElementById('regMsg').innerHTML = '<div class="text-danger">Please complete required fields (Name, Contact, ABO Group, Rhesus).</div>';
+    return;
+  }
+
+  if(type==='donor'){
+    const age = parseInt(document.getElementById('regAge').value||0);
+    const weight = parseInt(document.getElementById('regWeight').value||0);
+    const lastdon = parseInt(document.getElementById('regLastDon').value||9999);
+    const ill = document.getElementById('regIll').value;
+    const med = document.getElementById('regMed').value;
+
+    let reasons = [];
+    if(age < 16) reasons.push('Minimum age is 16.');
+    if(weight < 110) reasons.push('Minimum weight is 45kg.');
+    if(ill === 'yes') reasons.push('Recent illness prevents donation.');
+    if(lastdon < 56) reasons.push('Must wait 56 days since last whole blood donation.');
+    if(med === 'yes') reasons.push('Current medications may disqualify you.');
+
+    if(reasons.length){
+      document.getElementById('regMsg').innerHTML = '<div class="text-danger"><strong>Cannot register:</strong><ul>'+reasons.map(r=>'<li>'+r+'</li>').join('')+'</ul></div>';
+      return;
+    }
+
+    const blood = abo + rhesus;
+    donors.push({name, contact, blood, age, weight, notes});
+    document.getElementById('regMsg').innerHTML = '<div class="text-success">Donor registered — added to list.</div>';
+  } else {
+    const urgency = document.getElementById('regUrgency').value || 'Medium';
+    const blood = abo + rhesus; // recipients also specify ABO + Rhesus
+    recipients.push({name, contact, blood, urgency, notes});
+    document.getElementById('regMsg').innerHTML = '<div class="text-success">Recipient request submitted.</div>';
+  }
+  renderDonors(); renderRecipients(); updateChart(); renderCarousel();
+  setTimeout(()=>{ bootstrap.Modal.getInstance(document.getElementById('registrationModal')).hide(); }, 900);
+}
+
+// ---------- Donor-Recipient mapping ----------
+function findBestDonorForRecipient(recipient, availableDonors){
+  // Filter donors that can donate to this recipient based on compatibility
+  const compatible = availableDonors.filter(d => (compatibility[d.blood] || []).includes(recipient.blood));
+  if(compatible.length === 0) return null;
+  // Prefer exact blood type
+  const exact = compatible.find(d => d.blood === recipient.blood);
+  if(exact) return exact;
+  // Prefer universal O- donor
+  const oNeg = compatible.find(d => d.blood === 'O-');
+  if(oNeg) return oNeg;
+  // Prefer O+ if recipient is +
+  if(recipient.blood.endsWith('+')){
+    const oPos = compatible.find(d => d.blood === 'O+');
+    if(oPos) return oPos;
+  }
+  // otherwise return the first compatible donor
+  return compatible[0];
+}
+
+function mapRecipientsToDonorsModal(){
+  // Clone donors array to track used donors (so each donor used once)
+  const available = donors.slice();
+  // Sort recipients by urgency
+  const sorted = recipients.slice().sort((a,b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency]);
+
+  const rows = [];
+  sorted.forEach(rec => {
+    const donor = findBestDonorForRecipient(rec, available);
+    if(donor){
+      // remove donor from available
+      const idx = available.findIndex(d => d.name === donor.name && d.contact === donor.contact);
+      if(idx > -1) available.splice(idx,1);
+    }
+    rows.push({recipient:rec, donor});
+  });
+
+  // Build table HTML
+  let html = `
+    <div class="table-responsive">
+      <table id="mappingTable" class="table table-sm table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Recipient</th>
+            <th class="text-center">Blood</th>
+            <th class="text-center">Phone</th>
+            <th class="text-center">Urgency</th>
+            <th>Matched Donor</th>
+            <th class="text-center">Donor Blood</th>
+            <th class="text-center">Donor Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  rows.forEach(r => {
+    const rec = r.recipient;
+    const d = r.donor;
+    const urgencyClass = rec.urgency === 'High' ? 'badge bg-danger' : (rec.urgency === 'Medium' ? 'badge bg-warning text-dark' : 'badge bg-success');
+    html += `<tr>
+      <td>${escapeHtml(rec.name)}</td>
+      <td class="text-center">${escapeHtml(rec.blood)}</td>
+      <td class="text-center"><a href="tel:${escapeHtml(rec.contact)}">${escapeHtml(rec.contact)}</a></td>
+      <td class="text-center"><span class="${urgencyClass}">${escapeHtml(rec.urgency)}</span></td>
+      <td>${d ? escapeHtml(d.name) : '<em>No match</em>'}</td>
+      <td class="text-center">${d ? escapeHtml(d.blood) : ''}</td>
+      <td class="text-center">${d ? `<a href="tel:${escapeHtml(d.contact)}">${escapeHtml(d.contact)}</a>` : ''}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  document.getElementById('mappingContainer').innerHTML = html;
+  const modal = new bootstrap.Modal(document.getElementById('mappingModal'));
+  modal.show();
+}
+
+// ---------- LiveSupport AI Chat (improved) ----------
+let userName = null;
+let askingName = false;
+
+function addChatMessage(who, html){
+  const box = document.getElementById('chatMessages');
+  const wrap = document.createElement('div');
+  if(who === 'user') wrap.innerHTML = `<div><strong>You:</strong> ${html}</div>`;
+  else wrap.innerHTML = `<div><strong>AI:</strong> ${html}</div>`;
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+const knowledgeBase = {
+  intro: `Hi — I can help with eligibility, the new donor screening rationale, PrEP/PEP deferrals, and donor-recipient mapping. What's your name?`,
+  eligibility: `Typical rules: age >=16, weight >=110 lbs, no recent fevers/illness, last whole-blood donation at least 56 days ago, and no disqualifying medications. Use the 'Check Donor Eligibility' button for a quick check.`,
+  analSex: `Anal sex has a higher statistical risk of HIV transmission per sex act than vaginal or oral sex. Donors are only asked about anal sex if they report a new and/or multiple sexual partners in the last three months; if they had anal sex with those partners, they are deferred for three months since their most recent anal sex.`,
+  prepPep: `PrEP and PEP can affect HIV testing. FDA recommends deferral for 3 months after oral PrEP/PEP and 2 years after injectable PrEP. This helps ensure test accuracy during the window period.`,
+  window: `Every donation is tested, but tests have a 'window period' when a newly acquired infection may not be detected. The donor questionnaire helps identify recent exposures that testing might miss.`,
+  transgender: `The questionnaire is gender-neutral. Transgender donors who meet eligibility criteria are welcome to donate.`,
+  condoms: `Condom use is an excellent sexual health practice but is not used as a screening metric because it is not perfectly reliable (condoms can break or slip). Screening focuses on evidence-based risk factors.`
+};
+
+function toggleChat(){
+  const p = document.getElementById('chatPanel');
+  if(p.style.display === 'block') { p.style.display = 'none'; }
+  else {
+    p.style.display = 'block';
+    // if first time opening, ask for name
+    const box = document.getElementById('chatMessages');
+    if(!box.dataset.started){
+      addChatMessage('ai', knowledgeBase.intro);
+      askingName = true;
+      box.dataset.started = '1';
+    }
+  }
+}
+
+function generateAIReply(msg){
+  const m = msg.toLowerCase();
+  if(m.includes('elig') || m.includes('eligible')) return knowledgeBase.eligibility;
+  if(m.includes('anal')) return knowledgeBase.analSex;
+  if(m.includes('prep') || m.includes('pep')) return knowledgeBase.prepPep;
+  if(m.includes('window') || m.includes('test') || m.includes('tested')) return knowledgeBase.window;
+  if(m.includes('transgender')) return knowledgeBase.transgender;
+  if(m.includes('condom') || m.includes('safe-sex')) return knowledgeBase.condoms;
+  if(m.includes('map') || m.includes('match') || m.includes('recipient')) return `Click the 'Donor-Recipient Mapping' button to see one best donor matched per recipient (sorted by urgency).`;
+  if(m.includes('hello') || m.includes('hi') || m.includes('hey')) return `Hi${userName ? ' ' + userName : ''}! How can I help? Try: "eligibility", "why anal sex?", "PrEP/PEP", or "mapping".`;
+  return `Sorry — I don't have a detailed answer for that exact question. I can explain eligibility, the new screening rationale, PrEP/PEP deferrals, or show donor-recipient matches.`;
+}
+
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim(); if(!msg) return;
+  addChatMessage('user', escapeHtml(msg));
+
+  if(askingName && !userName){
+    userName = msg.split(' ')[0]; // first token
+    askingName = false;
+    addChatMessage('ai', `Nice to meet you, <strong>${escapeHtml(userName)}</strong>! I can help with eligibility, explain the screening, or show donor-recipient matches.`);
+    input.value = '';
+    return;
+  }
+
+  const reply = generateAIReply(msg);
+  addChatMessage('ai', escapeHtml(reply));
+  input.value = '';
+}
+
+// ---------- Initialization ----------
+document.addEventListener('DOMContentLoaded', function(){
+  renderDonors(); renderRecipients(); updateChart(); renderCarousel(); updateStats();
+
+  // wire mapping button
+  const mappingBtn = document.getElementById('mappingBtn');
+  if(mappingBtn) mappingBtn.addEventListener('click', mapRecipientsToDonorsModal);
+
+  // wire chat send button
+  document.getElementById('chatSendBtn').addEventListener('click', sendChat);
+
+  // wire search toggle
+  const searchToggle = document.getElementById('search-toggle');
+  const searchBar = document.getElementById('search-bar');
+  searchToggle.addEventListener('click', () => {
+    searchBar.style.display = (searchBar.style.display === 'flex' || searchBar.style.display === 'block') ? 'none' : 'flex';
+  });
+});
+
+</script>
+
+</body>
+</html>
