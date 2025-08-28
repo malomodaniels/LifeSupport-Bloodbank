@@ -15,7 +15,7 @@ def index(request):
         "recipients": recipients
     }
 
-    response = render(request, "core/index.html", context)
+    response = render(request, "/index.html", context)
     response['Content-Type'] = "text/html"
     return response
 
